@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realitas Catalog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── VARIABLES ─────────────────────────────────────────── */
+    :root {
+      --bg:          #0a0a0a;
+      --bg-warm:     #0d0b09;
+      --surface:     #111111;
+      --border:      #1e1e1e;
+      --border-warm: #1e1a16;
+      --text:        #d4d0c8;
+      --text-dim:    #6b6760;
+      --text-muted:  #3a3835;
+      --accent:      #8a7a5a;
+      --accent-dim:  #4a4232;
+      --red:         #7a3030;
+      --gold:        #6b5a3a;
+      --font-main:   'Libre Baskerville', Georgia, serif;
+      --font-body:   'EB Garamond', Georgia, serif;
+    }
+
+    /* ── RESET ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) var(--bg);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 18px;
+      line-height: 1.8;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ── LAYOUT ────────────────────────────────────────────── */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ── HEADER ────────────────────────────────────────────── */
+    header {
+      padding: 5rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-label {
+      font-family: var(--font-main);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .site-title {
+      font-family: var(--font-main);
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 400;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .site-subtitle {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      font-style: italic;
+      margin-bottom: 3rem;
+    }
+
+    .publisher-block {
+      font-family: var(--font-main);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      line-height: 2;
+    }
+
+    /* ── NAVIGATION ────────────────────────────────────────── */
+    nav {
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    nav a {
+      font-family: var(--font-main);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    nav a:hover { color: var(--text); }
+
+    nav a.active { color: var(--accent); }
+
+    /* ── DAWSON NOTE ───────────────────────────────────────── */
+    .dawson-note {
+      padding: 4rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dawson-note-label {
+      font-family: var(--font-main);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .dawson-note p {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--text-dim);
+      line-height: 1.9;
+      margin-bottom: 1rem;
+      max-width: 58ch;
+    }
+
+    .dawson-note p:last-of-type {
+      margin-bottom: 2rem;
+    }
+
+    .dawson-sig {
+      font-family: var(--font-main);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ── PUBLISHER NOTE ────────────────────────────────────── */
+    .publisher-note {
+      padding: 3rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .publisher-note-label {
+      font-family: var(--font-main);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .publisher-note p {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.9;
+      margin-bottom: 0.5rem;
+    }
+
+    .publisher-note .last-line {
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    /* ── SECTIONS ──────────────────────────────────────────── */
+    section {
+      padding: 4rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    section:last-child {
+      border-bottom: none;
+    }
+
+    .section-label {
+      font-family: var(--font-main);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── DOCUMENT LINKS ────────────────────────────────────── */
+    .doc-link {
+      display: block;
+      padding: 2rem 2.5rem;
+      border: 1px solid var(--border);
+      text-decoration: none;
+      transition: border-color 0.4s, background 0.4s;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doc-link::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--accent);
+      transform: scaleY(0);
+      transition: transform 0.4s;
+      transform-origin: bottom;
+    }
+
+    .doc-link:hover {
+      border-color: var(--accent-dim);
+      background: rgba(138, 122, 90, 0.03);
+    }
+
+    .doc-link:hover::before {
+      transform: scaleY(1);
+    }
+
+    .doc-link-title {
+      font-family: var(--font-main);
+      font-size: 1rem;
+      color: var(--text);
+      letter-spacing: 0.03em;
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    .doc-link-desc {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      font-style: italic;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .doc-link-meta {
+      font-family: var(--font-main);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .doc-link-arrow {
+      position: absolute;
+      right: 2.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      transition: color 0.3s, transform 0.3s;
+    }
+
+    .doc-link:hover .doc-link-arrow {
+      color: var(--accent);
+      transform: translateY(-50%) translateX(3px);
+    }
+
+    /* ── PHASE LIST ────────────────────────────────────────── */
+    .phase-list {
+      list-style: none;
+    }
+
+    .phase-item {
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border-warm);
+    }
+
+    .phase-item:last-child {
+      border-bottom: none;
+    }
+
+    .phase-number {
+      font-family: var(--font-main);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      min-width: 4rem;
+      text-transform: uppercase;
+    }
+
+    .phase-title {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .phase-status {
+      margin-left: auto;
+      font-family: var(--font-main);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .phase-status.active {
+      color: var(--accent);
+    }
+
+    /* ── SYMBOL KEY ────────────────────────────────────────── */
+    .symbol-key {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.8rem 1.5rem;
+      align-items: baseline;
+    }
+
+    .symbol {
+      font-family: var(--font-main);
+      font-size: 1rem;
+      color: var(--accent);
+    }
+
+    .symbol-desc {
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    /* ── QUOTE BLOCK ───────────────────────────────────────── */
+    .quote-block {
+      padding: 3rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin: 3rem 0;
+    }
+
+    .quote-text {
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      color: var(--text-dim);
+      font-style: italic;
+      line-height: 2;
+      margin-bottom: 0.3rem;
+    }
+
+    .quote-text.degraded {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .quote-attribution {
+      font-family: var(--font-main);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 1.5rem;
+    }
+
+    /* ── FOOTER ────────────────────────────────────────────── */
+    footer {
+      padding: 3rem 0 5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-title {
+      font-family: var(--font-main);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .footer-sig {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .footer-note {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-style: italic;
+      line-height: 1.7;
+      max-width: 48ch;
+    }
+
+    /* ── FADE IN ANIMATION ─────────────────────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(8px);
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.2s; }
+    .fade-in:nth-child(3) { animation-delay: 0.3s; }
+    .fade-in:nth-child(4) { animation-delay: 0.4s; }
+    .fade-in:nth-child(5) { animation-delay: 0.5s; }
+
+    /* ── DIVIDER ───────────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ── RESPONSIVE ────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      body { font-size: 16px; }
+      .container { padding: 0 1.25rem; }
+      header { padding: 3rem 0 2rem; }
+      .doc-link { padding: 1.5rem; }
+      .doc-link-arrow { display: none; }
+      .footer-top { flex-direction: column; gap: 0.5rem; }
+      nav { gap: 1.5rem; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- ── HEADER ──────────────────────────────────────────── -->
+  <header class="fade-in">
+    <p class="header-label">Recovered Document — Uploaded by D.B.E.</p>
+    <h1 class="site-title">Realitas Catalog</h1>
+    <p class="site-subtitle">A structured collection of entries attempting to describe reality as it is.</p>
+    <div class="publisher-block">
+      U.B.E. Press &nbsp;·&nbsp;
+      University of Broke Erwin Memorial Institute &nbsp;·&nbsp;
+      Author: A.B.E.
+    </div>
+  </header>
+
+  <!-- ── NAVIGATION ──────────────────────────────────────── -->
+  <nav class="fade-in">
+    <a href="#documents" class="active">Documents</a>
+    <a href="#phases">Phases</a>
+    <a href="#note">Publisher's Note</a>
+    <a href="#symbols">Symbol Key</a>
+  </nav>
+
+  <!-- ── DAWSON'S NOTE ────────────────────────────────────── -->
+  <div class="dawson-note fade-in" id="about">
+    <p class="dawson-note-label">From the person who posted this</p>
+    <p>
+      I found these pages in a desk while clearing out an old property.
+      Loose pages. Handwritten. No name on the first one.
+    </p>
+    <p>
+      I read them. I didn't understand most of it.
+      But I couldn't leave it alone. So I posted them.
+    </p>
+    <p>
+      The document calls itself the Realitas Catalog on the first page.
+      What follows are the first seven entries and the diary pages found alongside them.
+      They are presented in the order they were found.
+      Without correction.
+    </p>
+    <p>
+      I don't know who wrote them.
+    </p>
+    <p class="dawson-sig">— D.B.E.</p>
+  </div>
+
+  <!-- ── PUBLISHER'S NOTE ─────────────────────────────────── -->
+  <div class="publisher-note fade-in" id="note">
+    <p class="publisher-note-label">Publisher's Note — Dawson B.E.</p>
+    <p>The entries are presented with minimal alteration.</p>
+    <p>Supplementary context has been added where necessary.</p>
+    <p>References are included where available.</p>
+    <p>No attempt has been made to resolve inconsistencies.</p>
+    <p class="last-line">The material remains… as found. No further commentary is provided.</p>
+  </div>
+
+  <!-- ── DOCUMENTS ────────────────────────────────────────── -->
+  <section id="documents">
+    <p class="section-label">Available Documents</p>
+
+    <a
+      class="doc-link"
+      href="https://docs.google.com/document/d/1DyeSkw-wxy0wgkKlK3HkwXTa6S30_kTwfWmH8cMzgrE/edit?pli=1&tab=t.0"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <span class="doc-link-title">Realitas Catalog — Entries 001 through 007</span>
+      <span class="doc-link-desc">Phase 1: Classical Foundation. The complete first seven entries as recovered.</span>
+      <span class="doc-link-meta">
+        <span>246 entries total</span>
+        <span>Phase 1 of 12</span>
+        <span>⧉ Established physics · ◉ Original material</span>
+      </span>
+      <span class="doc-link-arrow">→</span>
+    </a>
+
+    <a
+      class="doc-link"
+      href="https://docs.google.com/document/d/1DyeSkw-wxy0wgkKlK3HkwXTa6S30_kTwfWmH8cMzgrE/edit?pli=1&tab=t.0"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <span class="doc-link-title">Personal Diary of A.B.E. — Phase 1 Entries</span>
+      <span class="doc-link-desc">December 1915 through March 1916. Eight entries found alongside the catalog pages.</span>
+      <span class="doc-link-meta">
+        <span>8 entries</span>
+        <span>December 1915 — March 1916</span>
+        <span>Unedited</span>
+      </span>
+      <span class="doc-link-arrow">→</span>
+    </a>
+
+  </section>
+
+  <!-- ── SYMBOL KEY ────────────────────────────────────────── -->
+  <section id="symbols">
+    <p class="section-label">Symbol Key</p>
+    <div class="symbol-key">
+      <span class="symbol">⧉</span>
+      <span class="symbol-desc">Corresponds to established physics. Presented accurately.</span>
+      <span class="symbol">◉</span>
+      <span class="symbol-desc">Original to the catalog. No external verification exists.</span>
+    </div>
+  </section>
+
+  <!-- ── PHASE OVERVIEW ────────────────────────────────────── -->
+  <section id="phases">
+    <p class="section-label">Catalog Structure — 12 Phases</p>
+    <ul class="phase-list">
+      <li class="phase-item">
+        <span class="phase-number">Phase 01</span>
+        <span class="phase-title">Classical Foundation — Entries 001–007</span>
+        <span class="phase-status active">Available</span>
+      </li>
+      <li class="phase-item">
+        <span class="phase-number">Phase 02</span>
+        <span class="phase-title">Emerging Issues</span>
+        <span class="phase-status">Pending</span>
+      </li>
+      <li class="phase-item">
+        <span class="phase-number">Phase 03</span>
+        <span class="phase-title">Early Quantum Ideas</span>
+        <span class="phase-status">Pending</span>
+      </li>
+      <li class="phase-item">
+        <span class="phase-number">Phase 04</span>
+        <span class="phase-title">Quantum Foundations</span>
+        <span class="phase-status">Pending</span>
+      </li>
+      <li class="phase-item">
+        <span class="phase-number">Phase 05</span>
+        <span class="phase-title">Intermediate Systems</span>
+        <span class="phase-status">Pending</span>
+      </li>
+      <li class="phase-item">
+        <span class="phase-number">Phase 06</span>
+        <span class="phase-title">Advanced Systems</span>
+        <span class="phase-status">Pending</span>
+      </li>
+      <li class="phase-item">
+        <span class="phase-number">Phase 07</span>
+        <span class="phase-title">Peak Understanding</span>
+        <span class="phase-status">Pending</span>
+      </li>
+      <li class="phase-item">
+        <span class="phase-number">Phase 08</span>
+        <span class="phase-title">Foundational Problems</span>
+        <span class="phase-status">Pending</span>
+      </li>
+      <li class="phase-item">
+        <span class="phase-number">Phase 09</span>
+        <span class="phase-title">Competing Theories</span>
+        <span class="phase-status">Pending</span>
+      </li>
+      <li class="phase-item">
+        <span class="phase-number">Phase 10</span>
+        <span class="phase-title">Systematic Failure</span>
+        <span class="phase-status">Pending</span>
+      </li>
+      <li class="phase-item">
+        <span class="phase-number">Phase 11</span>
+        <span class="phase-title">Closest Approximation</span>
+        <span class="phase-status">Pending</span>
+      </li>
+      <li class="phase-item">
+        <span class="phase-number">Phase 12</span>
+        <span class="phase-title">—</span>
+        <span class="phase-status">—</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ── LAST LINE QUOTE ───────────────────────────────────── -->
+  <div class="quote-block">
+    <p class="quote-text">It does not stop when you stop looking.</p>
+    <p class="quote-text">I thought it would.</p>
+    <p class="quote-text">I thought the looking was the problem.</p>
+    <p class="quote-text">It was not. It never was.</p>
+    <p class="quote-text">It was what it does when you let it.</p>
+    <p class="quote-text">I exist to not see but feel.</p>
+    <p class="quote-text">It doesn't stop because I exist in it.</p>
+    <p class="quote-text">It was never the problem.</p>
+    <p class="quote-text">I was.</p>
+    <p class="quote-text degraded">i have no objection to what follows</p>
+    <p class="quote-attribution">Final entry — Personal Diary of A.B.E. — April 26, 1919</p>
+  </div>
+
+  <!-- ── FOOTER ────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-top">
+      <span class="footer-title">Realitas Catalog</span>
+      <span class="footer-sig">— D.B.E.</span>
+    </div>
+    <p class="footer-note">
+      The following is a work of fiction. All characters, events, and catalog entries
+      are fictional and created for narrative purposes. The scientific principles,
+      equations, and concepts referenced reflect established physics and are presented
+      with accuracy. No scientific misinformation is intended or presented.
+    </p>
+  </footer>
+
+</div>
+
+<!-- ── SCROLL FADE ───────────────────────────────────────── -->
+<script>
+  const observer = new IntersectionObserver(
+    entries => entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    }),
+    { threshold: 0.1 }
+  );
+
+  document.querySelectorAll('section, .dawson-note, .publisher-note, .quote-block, footer').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(12px)';
+    el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
